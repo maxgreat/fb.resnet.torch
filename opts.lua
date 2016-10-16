@@ -11,9 +11,6 @@ local M = { }
 function M.parse(arg)
    local cmd = torch.CmdLine()
    cmd:text()
-   cmd:text('Torch-7 ResNet Training script')
-   cmd:text('See https://github.com/facebook/fb.resnet.torch/blob/master/TRAINING.md for examples')
-   cmd:text()
    cmd:text('Options:')
     ------------ General options --------------------
    cmd:option('-data',       '',         'Path to dataset')
@@ -63,6 +60,8 @@ function M.parse(arg)
       cmd:error('error: unable to create checkpoint directory: ' .. opt.save .. '\n')
    end
 
+   --SET DATASET
+   --- IMAGENET
    if opt.dataset == 'imagenet' then
       -- Handle the most common case of missing -data flag
       local trainDir = paths.concat(opt.data, 'train')
@@ -74,10 +73,14 @@ function M.parse(arg)
       -- Default shortcutType=B and nEpochs=90
       opt.shortcutType = opt.shortcutType == '' and 'B' or opt.shortcutType
       opt.nEpochs = opt.nEpochs == 0 and 90 or opt.nEpochs
+      --
+  --- CIFAR10
    elseif opt.dataset == 'cifar10' then
       -- Default shortcutType=A and nEpochs=164
       opt.shortcutType = opt.shortcutType == '' and 'A' or opt.shortcutType
       opt.nEpochs = opt.nEpochs == 0 and 164 or opt.nEpochs
+      --
+  --- CIFAR100
    elseif opt.dataset == 'cifar100' then
        -- Default shortcutType=A and nEpochs=164
        opt.shortcutType = opt.shortcutType == '' and 'A' or opt.shortcutType
@@ -86,6 +89,7 @@ function M.parse(arg)
       cmd:error('unknown dataset: ' .. opt.dataset)
    end
 
+   -- FINETUNING
    if opt.resetClassifier then
       if opt.nClasses == 0 then
          cmd:error('-nClasses required when resetClassifier is set')

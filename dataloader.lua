@@ -21,6 +21,7 @@ function DataLoader.create(opt)
    local loaders = {}
 
    for i, split in ipairs{'train', 'val'} do
+      -- call create method from datasets/init.lua
       local dataset = datasets.create(opt, split)
       loaders[i] = M.DataLoader(dataset, opt, split)
    end
@@ -38,7 +39,9 @@ function DataLoader:__init(dataset, opt, split)
          torch.manualSeed(manualSeed + idx)
       end
       torch.setnumthreads(1)
+      -- define dataset
       _G.dataset = dataset
+      -- define pre-process function
       _G.preprocess = dataset:preprocess()
       return dataset:size()
    end
@@ -57,11 +60,14 @@ end
 function DataLoader:run()
    local threads = self.threads
    local size, batchSize = self.__size, self.batchSize
+   -- defines the order in which exampes are processed 
+   -- in a batch
    local perm = torch.randperm(size)
 
    local idx, sample = 1, nil
    local function enqueue()
       while idx <= size and threads:acceptsjob() do
+        -- get batchSize examples or the remaing ones
          local indices = perm:narrow(1, idx, math.min(batchSize, size - idx + 1))
          threads:addjob(
             function(indices, nCrops)
@@ -70,12 +76,15 @@ function DataLoader:run()
                local target = torch.IntTensor(sz)
                for i, idx in ipairs(indices:totable()) do
                   local sample = _G.dataset:get(idx)
+                  -- Preprocess input here
+                  -- normalization, etc
                   local input = _G.preprocess(sample.input)
                   if not batch then
                      imageSize = input:size():totable()
                      if nCrops > 1 then table.remove(imageSize, 1) end
                      batch = torch.FloatTensor(sz, nCrops, table.unpack(imageSize))
                   end
+                  -- added pre-proccessed input and target label to the batch
                   batch[i]:copy(input)
                   target[i] = sample.target
                end

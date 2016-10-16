@@ -69,10 +69,12 @@ function Trainer:train(epoch, dataloader)
       lossSum = lossSum + loss*batchSize
       N = N + batchSize
 
+      --[[
       print((' | Epoch: [%d][%d/%d]    Time %.3f  Data %.3f  Err %1.4f  top1 %7.3f  top5 %7.3f'):format(
-         epoch, n, trainSize, timer:time().real, dataTime, loss, top1, top5))
+        epoch, n, trainSize, timer:time().real, dataTime, loss, top1, top5))
 
       -- check that the storage didn't get changed do to an unfortunate getParameters call
+      -- ]]
       assert(self.params:storage() == self.model:parameters()[1]:storage())
 
       timer:reset()
@@ -109,9 +111,10 @@ function Trainer:test(epoch, dataloader)
       top5Sum = top5Sum + top5*batchSize
       N = N + batchSize
 
+      --[[
       print((' | Test: [%d][%d/%d]    Time %.3f  Data %.3f  top1 %7.3f (%7.3f)  top5 %7.3f (%7.3f)'):format(
-         epoch, n, size, timer:time().real, dataTime, top1, top1Sum / N, top5, top5Sum / N))
-
+       epoch, n, size, timer:time().real, dataTime, top1, top1Sum / N, top5, top5Sum / N))
+      --]]
       timer:reset()
       dataTimer:reset()
    end

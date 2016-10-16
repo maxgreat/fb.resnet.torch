@@ -41,16 +41,22 @@ if opt.testOnly then
    return
 end
 
+print(opt)
+
 local startEpoch = checkpoint and checkpoint.epoch + 1 or opt.epochNumber
 local bestTop1 = math.huge
 local bestTop5 = math.huge
 for epoch = startEpoch, opt.nEpochs do
+
+  local timer = torch.Timer()
    -- Train for a single epoch
    local trainTop1, trainTop5, trainLoss = trainer:train(epoch, trainLoader)
 
    -- Run model on validation set
    local testTop1, testTop5 = trainer:test(epoch, valLoader)
 
+   print('Epoch result model  -- Time', testTop1, testTop5, opt.LR, timer:time().real)
+   timer:reset()
    local bestModel = false
    if testTop1 < bestTop1 then
       bestModel = true

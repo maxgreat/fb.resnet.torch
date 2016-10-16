@@ -15,12 +15,14 @@ local M = {}
 local CifarDataset = torch.class('resnet.CifarDataset', M)
 
 function CifarDataset:__init(imageInfo, opt, split)
+  -- split is {train} or  {val}
    assert(imageInfo[split], split)
    self.imageInfo = imageInfo[split]
    self.split = split
 end
 
 function CifarDataset:get(i)
+  -- imageInfo['train or val'].data[i]
    local image = self.imageInfo.data[i]:float()
    local label = self.imageInfo.labels[i]
 

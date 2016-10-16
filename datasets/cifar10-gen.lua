@@ -22,7 +22,11 @@ local function convertToTensor(files)
    for _, file in ipairs(files) do
       local m = torch.load(file, 'ascii')
       if not data then
+        -- data is in an array of 3072 x 10000
+        -- transporsed data to 10000 x 3072
          data = m.data:t()
+         -- labels are in 1 x 10000
+         -- transpose to 10000 rows
          labels = m.labels:squeeze()
       else
          data = torch.cat(data, m.data:t(), 1)

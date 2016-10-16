@@ -18,15 +18,21 @@ local M = {}
 
 function M.setup(opt, checkpoint)
    local model
+   --
+   --- RESUME TRAINING
    if checkpoint then
       local modelPath = paths.concat(opt.resume, checkpoint.modelFile)
       assert(paths.filep(modelPath), 'Saved model not found: ' .. modelPath)
       print('=> Resuming model from ' .. modelPath)
       model = torch.load(modelPath):cuda()
+  ---
+  -- FINETUNING?
    elseif opt.retrain ~= 'none' then
       assert(paths.filep(opt.retrain), 'File not found: ' .. opt.retrain)
       print('Loading model from file: ' .. opt.retrain)
       model = torch.load(opt.retrain):cuda()
+  --- 
+  --- MODEL Type
    else
       print('=> Creating model from file: models/' .. opt.netType .. '.lua')
       model = require('models/' .. opt.netType)(opt)
@@ -77,6 +83,7 @@ function M.setup(opt, checkpoint)
       end)
    end
 
+   -- Multi GPU Training
    -- Wrap the model with DataParallelTable, if using more than one GPU
    if opt.nGPU > 1 then
       local gpus = torch.range(1, opt.nGPU):totable()
@@ -93,6 +100,7 @@ function M.setup(opt, checkpoint)
       model = dpt:cuda()
    end
 
+   -- Set Loss Function here
    local criterion = nn.CrossEntropyCriterion():cuda()
    return model, criterion
 end
