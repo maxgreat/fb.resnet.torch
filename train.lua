@@ -32,6 +32,7 @@ end
 function Trainer:train(epoch, dataloader)
    -- Trains the model for a single epoch
    self.optimState.learningRate = self:learningRate(epoch)
+   print('LR - ' .. self.optimState.learningRate)
 
    local timer = torch.Timer()
    local dataTimer = torch.Timer()
@@ -170,7 +171,7 @@ function Trainer:learningRate(epoch)
    if self.opt.dataset == 'imagenet' then
       decay = math.floor((epoch - 1) / 30)
    elseif self.opt.dataset == 'cifar10' then
-      decay = epoch >= 122 and 2 or epoch >= 81 and 1 or 0
+      decay = epoch >= 50 and 2 or epoch >= 25 and 1 or 0
    elseif self.opt.dataset == 'cifar100' then
       decay = epoch >= 122 and 2 or epoch >= 81 and 1 or 0
    end
