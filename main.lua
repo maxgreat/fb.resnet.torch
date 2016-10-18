@@ -42,6 +42,7 @@ if opt.testOnly then
 end
 
 print(opt)
+print(model)
 
 local startEpoch = checkpoint and checkpoint.epoch + 1 or opt.epochNumber
 local bestTop1 = math.huge
