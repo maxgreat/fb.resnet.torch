@@ -25,6 +25,8 @@ cutorch.manualSeedAll(opt.manualSeed)
 
 -- Load previous checkpoint, if it exists
 local checkpoint, optimState = checkpoints.latest(opt)
+-- save checkpoint in a folder with same name as dataset
+opt.save = opt.dataset .. 'checkpoints'
 
 -- Create model
 local model, criterion = models.setup(opt, checkpoint)
@@ -56,7 +58,7 @@ for epoch = startEpoch, opt.nEpochs do
    -- Run model on validation set
    local testTop1, testTop5 = trainer:test(epoch, valLoader)
 
-   print('Epoch result model  -- Time', testTop1, testTop5, opt.LR, timer:time().real)
+   print('Epoch result model  Error -- Time', testTop1, testTop5, ' -- ', timer:time().real)
    timer:reset()
    local bestModel = false
    if testTop1 < bestTop1 then
