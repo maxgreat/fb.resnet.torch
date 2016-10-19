@@ -26,9 +26,9 @@ require 'image'
 local t = require '../datasets/transforms'
 
 
-if #arg < 2 then
-   io.stderr:write('Usage (Single file mode): th extract-features.lua [MODEL] [FILE] ... \n')
-   io.stderr:write('Usage (Batch mode)      : th extract-features.lua [MODEL] [BATCH_SIZE] [DIRECTORY_CONTAINING_IMAGES]  \n')
+if #arg < 3 then
+   io.stderr:write('Usage (Single file mode): th extract-features.lua [MODEL] [OUPUTFILE] [FILE] ... \n')
+   io.stderr:write('Usage (Batch mode)      : th extract-features.lua [MODEL] [BATCH_SIZE] [OUTPUTFILE] [DIRECTORY_CONTAINING_IMAGES]  \n')
    os.exit(1)
 end
 
@@ -47,8 +47,8 @@ if tonumber(arg[2]) ~= nil then -- batch mode ; collect file from directory
     
     local lfs  = require 'lfs'
     batch_size = tonumber(arg[2])
-    dir_path   = arg[3]
-
+    dir_path   = arg[4]
+	io.stderr:write('Load the file from ' .. arg[4] .. '\n')
     for file in lfs.dir(dir_path) do -- get the list of the files
         if file~="." and file~=".." then
             table.insert(list_of_filenames, dir_path..'/'..file)
@@ -56,7 +56,7 @@ if tonumber(arg[2]) ~= nil then -- batch mode ; collect file from directory
     end
 
 else -- single file mode ; collect file from command line
-    for i=2, #arg do
+    for i=3, #arg do
         f = arg[i]
         if not paths.filep(f) then
           io.stderr:write('file not found: ' .. f .. '\n')
@@ -130,5 +130,5 @@ for i=1,number_of_files,batch_size do
 
 end
 
-torch.save('features.t7', {features=features, image_list=list_of_filenames})
-print('saved features to features.t7')
+torch.save(arg[3], {features=features, image_list=list_of_filenames})
+print('saved features to '..arg[3])
