@@ -32,6 +32,8 @@ if #arg < 3 then
    os.exit(1)
 end
 
+print("Parameters : ")
+print(arg)
 
 -- get the list of files
 local list_of_filenames = {}
@@ -44,17 +46,15 @@ end
     
 
 if tonumber(arg[2]) ~= nil then -- batch mode ; collect file from directory
-    
-    local lfs  = require 'lfs'
-    batch_size = tonumber(arg[2])
-    dir_path   = arg[4]
+	local lfs  = require 'lfs'
+	batch_size = tonumber(arg[2])
+	dir_path   = arg[4]
 	io.stderr:write('Load the file from ' .. arg[4] .. '\n')
-    for file in lfs.dir(dir_path) do -- get the list of the files
-        if file~="." and file~=".." then
-            table.insert(list_of_filenames, dir_path..'/'..file)
-        end
-    end
-
+	for file in lfs.dir(dir_path) do -- get the list of the files
+		if file~="." and file~=".." then
+			table.insert(list_of_filenames, dir_path..'/'..file)
+		end
+	end
 else -- single file mode ; collect file from command line
     for i=3, #arg do
         f = arg[i]
