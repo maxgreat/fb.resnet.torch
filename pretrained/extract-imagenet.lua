@@ -24,8 +24,8 @@ batch_size = tonumber(arg[2])
 dir_path   = arg[3]
 outputdir  = arg[4]
 for file in paths.iterdirs(dir_path) do --for each classes
-	if not paths.filep(outputdir..'/'..file) then
-		print("Extract features for concept : "..file)
+	if not paths.filep(outputdir..'/'..file..'.t7') then
+		print("Extract features for concept : "..file..'.t7')
 		local params = {}
 		params[1] = arg[1] --model
 		params[2] = batch_size
