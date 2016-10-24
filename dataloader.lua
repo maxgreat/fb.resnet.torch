@@ -44,8 +44,9 @@ function DataLoader:__init(dataset, opt, split)
     -- define pre-process function
     _G.preprocess = dataset:preprocess()
     
-    -- DEBUG
-    print('In dataloader Split .. Size  | '.. split .. ' .. ' .. dataset:size())
+    if opt.debug == 'true' then
+      print('In dataloader Split .. Size  | '.. split .. ' .. ' .. dataset:size())
+    end
     return dataset:size()
   end
 

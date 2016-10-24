@@ -10,6 +10,7 @@ local function createModel(opt)
 
   local widthMult = opt.widthMult
   local baseWidth = opt.width
+  local numClasses = 100
 
   local depthFilters = baseWidth*widthMult
   local model = nn.Sequential()
@@ -36,18 +37,12 @@ local function createModel(opt)
   model:add(Convolution(depthFilters,depthFilters,1,1,1,1,0,0))
   model:add(ReLU(true))
 
-  model:add(Convolution(depthFilters,depthFilters,1,1,1,1,0,0))
-  model:add(ReLU(true))
-
-  model:add(Convolution(depthFilters,depthFilters,1,1,1,1,0,0))
-  model:add(ReLU(true))
-
-  model:add(Convolution(depthFilters,10,1,1,1,1,0,0))
+  model:add(Convolution(depthFilters,numClasses,1,1,1,1,0,0))
   model:add(ReLU(true))
 
   model:add(Avg(6, 6, 1, 1))
-  model:add(nn.View(10):setNumInputDims(3))
-  model:add(nn.Linear(10, 10))
+  model:add(nn.View(numClasses):setNumInputDims(3))
+  model:add(nn.Linear(numClasses, numClasses))
 
   local function ConvInit(name)
     for k,v in pairs(model:findModules(name)) do

@@ -15,6 +15,7 @@ function M.parse(arg)
   ------------ General options --------------------
   cmd:option('-data',       '',         'Path to dataset')
   cmd:option('-dataset',    'cifar10', 'Options: imagenet | cifar10 | cifar100 | image')
+  cmd:option('-dataFile',   '',        'Name of .t7 file to use for training and testing. This is needed in when using image.lua')
   cmd:option('-manualSeed', 0,          'Manually set RNG seed')
   cmd:option('-nGPU',       1,          'Number of GPUs to use by default')
   cmd:option('-backend',    'cudnn',    'Options: cudnn | cunn')
