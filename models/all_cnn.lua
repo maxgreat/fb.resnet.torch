@@ -5,7 +5,6 @@ local Convolution = cudnn.SpatialConvolution
 local Avg = cudnn.SpatialAveragePooling
 local ReLU = cudnn.ReLU
 local Max = nn.SpatialMaxPooling
-local SBatchNorm = nn.SpatialBatchNormalization
 
 local function createModel(opt)
 
@@ -20,6 +19,8 @@ local function createModel(opt)
 
   model:add(Max(3,3,2,2):ceil())
   model:add(ReLU(true))
+  
+  model:add(nn.Dropout(0.5))
 
   model:add(Convolution(baseWidth, depthFilters,5,5,1,1,2,2))
   model:add(ReLU(true))
@@ -27,7 +28,15 @@ local function createModel(opt)
   model:add(Max(3,3,2,2):ceil())
   model:add(ReLU(true))
 
+  model:add(nn.Dropout(0.5))
+
   model:add(Convolution(depthFilters,depthFilters,3,3,1,1,0,0))
+  model:add(ReLU(true))
+
+  model:add(Convolution(depthFilters,depthFilters,1,1,1,1,0,0))
+  model:add(ReLU(true))
+
+  model:add(Convolution(depthFilters,depthFilters,1,1,1,1,0,0))
   model:add(ReLU(true))
 
   model:add(Convolution(depthFilters,depthFilters,1,1,1,1,0,0))

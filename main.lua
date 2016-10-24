@@ -20,13 +20,14 @@ torch.setdefaulttensortype('torch.FloatTensor')
 torch.setnumthreads(1)
 
 local opt = opts.parse(arg)
+opt.save = opt.dataset .. 'checkpoints'
+
 torch.manualSeed(opt.manualSeed)
 cutorch.manualSeedAll(opt.manualSeed)
 
 -- Load previous checkpoint, if it exists
 local checkpoint, optimState = checkpoints.latest(opt)
 -- save checkpoint in a folder with same name as dataset
-opt.save = opt.dataset .. 'checkpoints'
 
 -- Create model
 local model, criterion = models.setup(opt, checkpoint)
@@ -37,14 +38,17 @@ local trainLoader, valLoader = DataLoader.create(opt)
 -- The trainer handles the training loop and evaluation on validation set
 local trainer = Trainer(model, criterion, opt, optimState)
 
+
+print(opt)
+print(model)
+
+
 if opt.testOnly then
    local top1Err, top5Err = trainer:test(0, valLoader)
    print(string.format(' * Results top1: %6.3f  top5: %6.3f', top1Err, top5Err))
    return
 end
 
-print(opt)
-print(model)
 
 local startEpoch = checkpoint and checkpoint.epoch + 1 or opt.epochNumber
 local bestTop1 = math.huge

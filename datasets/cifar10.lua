@@ -37,6 +37,7 @@ function CifarDataset:size()
 end
 
 -- Computed from entire CIFAR-10 training set
+-- Values are applicable when image,load('path',3,'byte')
 local meanstd = {
    mean = {125.3, 123.0, 113.9},
    std  = {63.0,  62.1,  66.7},

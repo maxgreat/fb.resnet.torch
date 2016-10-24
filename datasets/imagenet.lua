@@ -64,6 +64,7 @@ function ImagenetDataset:size()
 end
 
 -- Computed from random subset of ImageNet training images
+-- Values are applicable when using image.load('path',c,'float')
 local meanstd = {
    mean = { 0.485, 0.456, 0.406 },
    std = { 0.229, 0.224, 0.225 },
