@@ -32,8 +32,6 @@ if #arg < 3 then
    os.exit(1)
 end
 
-print("Parameters : ")
-print(arg)
 
 -- get the list of files
 local list_of_filenames = {}
