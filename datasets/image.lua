@@ -20,7 +20,7 @@ function ImageDataset:get(i)
 end
 
 function ImageDataset:size()
-  print (#self.imageInfo.data)
+  -- print (#self.imageInfo.data)
   --return #self.imageInfo.data
   return self.imageInfo.data:size(1)
 end

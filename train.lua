@@ -10,7 +10,7 @@
 --
 
 local optim = require 'optim'
-
+local xlua = require 'xlua'
 local M = {}
 local Trainer = torch.class('resnet.Trainer', M)
 
@@ -32,7 +32,6 @@ end
 function Trainer:train(epoch, dataloader)
   -- Trains the model for a single epoch
   self.optimState.learningRate = self:learningRate(epoch)
-  print('LR - ' .. self.optimState.learningRate)
 
   local timer = torch.Timer()
   local dataTimer = torch.Timer()
@@ -45,10 +44,13 @@ function Trainer:train(epoch, dataloader)
   local top1Sum, top5Sum, lossSum = 0.0, 0.0, 0.0
   local N = 0
 
-  print('=> Training epoch # ' .. epoch)
+  print('=> Training epoch # ' .. epoch .. ' with LR: ' .. self.optimState.learningRate)
   -- set the batch norm to training mode
   self.model:training()
+  local tic = torch.tic()
   for n, sample in dataloader:run() do
+    xlua.progress(n, trainSize)
+
     local dataTime = dataTimer:time().real
 
     -- Copy input and target to the GPU
@@ -69,6 +71,7 @@ function Trainer:train(epoch, dataloader)
     self.criterion:backward(self.model.output, self.target)
     self.model:backward(self.input, self.criterion.gradInput)
 
+    -- set Learning Algorithm here
     optim.sgd(feval, self.params, self.optimState)
 
     local top1, top5 = self:computeScore(output, sample.target, 1)

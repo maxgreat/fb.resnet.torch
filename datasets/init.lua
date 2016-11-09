@@ -12,35 +12,40 @@
 local M = {}
 
 local function isvalid(opt, cachePath)
-   local imageInfo = torch.load(cachePath)
-   if imageInfo.basedir and imageInfo.basedir ~= opt.data then
-      return false
-   end
-   return true
+  local imageInfo = torch.load(cachePath)
+  if imageInfo.basedir and imageInfo.basedir ~= opt.data then
+    return false
+  end
+  return true
 end
 
 function M.create(opt, split)
   --folder where data is kept
   --checks if train/val data is in one file already
-   local cachePath = paths.concat(opt.gen, opt.dataset .. '.t7')
-   --
-   -- download and create the dataset in .t7 if it does not exist
-   if not paths.filep(cachePath) or not isvalid(opt, cachePath) then
-      paths.mkdir('gen')
+  local cachePath = paths.concat(opt.gen, opt.dataset .. '.t7')
+  if opt.dataset == 'image' then
+    -- using image.lua for loading different datasets
+    -- each of which is saved as a .t7
+    cachePath = paths.concat(opt.gen, opt.dataFile .. '.t7')
+  end
+  --
+  -- download and create the dataset in .t7 if it does not exist
+  if not paths.filep(cachePath) or not isvalid(opt, cachePath) then
+    paths.mkdir('gen')
 
-      -- dateset-gen.lua should exist. It does data setup
-      local script = paths.dofile(opt.dataset .. '-gen.lua')
-      script.exec(opt, cachePath)
-   end
+    -- dateset-gen.lua should exist. It does data setup
+    local script = paths.dofile(opt.dataset .. '-gen.lua')
+    script.exec(opt, cachePath)
+  end
 
-   -- imageInfo is a table with entries 
-   -- for train and val data
-   -- train and val are keys which point to 
-   -- the actual images
-   local imageInfo = torch.load(cachePath)
-
-   local Dataset = require('datasets/' .. opt.dataset)
-   return Dataset(imageInfo, opt, split)
+  -- imageInfo is a table with entries
+  -- for train and val data
+  -- train and val are keys which point to
+  -- the actual images
+  local imageInfo = torch.load(cachePath)
+  print('Loading data from: ' .. cachePath)
+  local Dataset = require('datasets/' .. opt.dataset)
+  return Dataset(imageInfo, opt, split)
 end
 
 return M
