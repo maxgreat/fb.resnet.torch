@@ -1,6 +1,12 @@
 import glob
 import subprocess
 
-for image in glob.glob('../pretrained/res/*.t7'):
-	#print "Call th createListImage.lua -data ", image, ' -nImages 5 >> imageList.txt'
-	subprocess.call(['th', 'createListImage.lua', '-data', image, '-nImages', '100'])
+nbImages = '500'
+
+with open("trainList.txt", "w") as ftrain:
+	for image in glob.glob('../pretrained/res/*.t7'):
+		subprocess.call(['th', 'createListImage.lua', '-data', image, '-nImages', nbImages], stdout=ftrain)
+
+with open("valList.txt", "w") as f:
+	for image in glob.glob('../pretrained/val/*.t7'):
+		subprocess.call(['th', 'createListImage.lua', '-data', image, '-nImages', nbImages],stdout=f)

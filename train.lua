@@ -144,7 +144,8 @@ function Trainer:computeScore(output, target, nCrops)
 
   -- Coputes the top1 and top5 error rate
   local batchSize = output:size(1)
-
+  print('Output:')
+  print(output:size())
   local _ , predictions = output:float():sort(2, true) -- descending
 
   -- Find which predictions match the target

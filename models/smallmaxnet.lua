@@ -5,9 +5,6 @@ require 'cudnn'
 local function createModel(opt)
   local model = nn.Sequential()
 
-
-  model = nn.Sequential()
-
   model:add(cudnn.SpatialConvolution(3,32, 5,5, 1,1))
   model:add(cudnn.ReLU(true))
   model:add(nn.SpatialMaxPooling(3,3,2,2))
@@ -24,12 +21,9 @@ local function createModel(opt)
   model:add(cudnn.ReLU(true))
   model:add(nn.SpatialAveragePooling(2,2,2,2))
 
-  model:add(nn.View())
+  model:add(nn.View(-1):setNumInputDims(3))
 
-  a = model:forward(data);
-  a:size()
-
-
+  
   local function ConvInit(name)
     for k,v in pairs(model:findModules(name)) do
        local n = v.kW*v.kH*v.nOutputPlane
